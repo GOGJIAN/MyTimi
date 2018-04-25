@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">MyTimi</string>
+    <string name="today_pay">本月消费</string>
+    <string name="today_income">本月收入</string>
+    <string name="number100">100.00</string>
+    <string name="income">收入</string>
+    <string name="pay">支出</string>
+    <string name="moneyString">￥3.00</string>
+
+</resources>
