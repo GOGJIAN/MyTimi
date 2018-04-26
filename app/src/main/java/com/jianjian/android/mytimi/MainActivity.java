@@ -2,6 +2,7 @@ package com.jianjian.android.mytimi;
 
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -16,9 +17,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jianjian.android.mytimi.View.MainCycleView;
+import com.jianjian.android.mytimi.model.CycleItem;
 import com.jianjian.android.mytimi.model.Order;
 import com.jianjian.android.mytimi.model.OrderLab;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -36,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private OrderAdapter mAdapter;
     private OrderLab mOrderLab;
 
+
     private Integer lastIndexItem;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,9 +54,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initView(){
-        mMainCycleView.setData(mOrderLab.getOrders());
-        mMainCycleView.setCycleWidth(2);
-        mMainCycleView.setAnimationLength(1500);
+        mMainCycleView.setData(getItems(mOrderLab.getOrders()));
+//        mMainCycleView.setCycleWidth(5);
+//        mMainCycleView.setAnimationLength(3000);
+//        mMainCycleView.setStartPoint(0);
+//        mMainCycleView.setEndPoint(360);
         mMainCycleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,6 +116,27 @@ public class MainActivity extends AppCompatActivity {
         updateUI();
     }
 
+    //得到item从orders中
+    private ArrayList<CycleItem> getItems(List<Order> Orders){
+        @SuppressLint("UseSparseArrays")
+        HashMap<Integer,Float> itemHash = new HashMap<>();
+        ArrayList<CycleItem> items = new ArrayList<>();
+        for(Order order:Orders){
+            if(itemHash.containsKey(order.getColor())){
+                itemHash.put(order.getColor(),itemHash.get(order.getColor())+order.getMoney());
+            }else{
+                itemHash.put(order.getColor(),order.getMoney());
+            }
+        }
+        for(Integer i:itemHash.keySet()){
+            CycleItem item = new CycleItem();
+            item.setColor(i);
+            item.setNum(itemHash.get(i));
+            items.add(item);
+        }
+        return items;
+    }
+
     private void updateUI(){
         List<Order> Orders = mOrderLab.getOrders();
         //如果Adapter不存在，就创建并添加，如果存在就更新
@@ -119,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
             mAdapter.setOrders(Orders);
             mAdapter.notifyDataSetChanged();
         }
-        mMainCycleView.setData(Orders);
+        mMainCycleView.setData(getItems(Orders));
         mMainCycleView.updateUI();
     }
 

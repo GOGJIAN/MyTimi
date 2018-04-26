@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MainCycleView">
+        <attr name="startPoint" format="float"/>
+        <attr name="endPoint" format="float"/>
+        <attr name="cycleWidth" format="integer"/>
+        <attr name="animationLength" format="integer"/>
+    </declare-styleable>
+</resources>

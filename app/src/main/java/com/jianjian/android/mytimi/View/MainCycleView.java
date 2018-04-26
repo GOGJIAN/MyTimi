@@ -4,6 +4,7 @@ package com.jianjian.android.mytimi.View;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.jianjian.android.mytimi.R;
+import com.jianjian.android.mytimi.model.CycleItem;
 import com.jianjian.android.mytimi.model.Order;
 
 import java.util.ArrayList;
@@ -47,26 +49,32 @@ public class MainCycleView extends View {
 
     private int cycleWidth = 10;
 
-    List<Order> mOrders = new ArrayList<>();
+    List<CycleItem> mItems = new ArrayList<>();
 
     public MainCycleView(Context context) {
         super(context);
-        init();
+        init(null);
     }
 
     public MainCycleView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
-        init();
+        TypedArray array = context.obtainStyledAttributes(attrs,R.styleable.MainCycleView);
+        init(array);
+        array.recycle();
     }
 
     public MainCycleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init();
+        TypedArray array = context.obtainStyledAttributes(attrs,R.styleable.MainCycleView);
+        init(array);
+        array.recycle();
     }
 
     public MainCycleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
-        init();
+        TypedArray array = context.obtainStyledAttributes(attrs,R.styleable.MainCycleView);
+        init(array);
+        array.recycle();
     }
 
     @Override
@@ -100,9 +108,9 @@ public class MainCycleView extends View {
     private void drawItem(Canvas canvas,RectF rectF){
         float curStartPoint = startPoint;
         float curSweepLength ;
-        for(Order order :mOrders){
-            mPaint.setColor(getResources().getColor(order.getColor()));
-            curSweepLength = order.getMoney()/totalFee*360;
+        for(CycleItem item:mItems){
+            mPaint.setColor(getResources().getColor(item.getColor()));
+            curSweepLength = item.getNum()/totalFee*360;
             canvas.drawArc(rectF,curStartPoint,curSweepLength,false,mPaint);
             curStartPoint+=curSweepLength;
         }
@@ -112,35 +120,38 @@ public class MainCycleView extends View {
 
     public void updateUI(){
         curPoint = 90;
-        setAnimation(90,450,animationLength);
+        setAnimation(startPoint,endPoint,animationLength);
     }
 
     private void drawMask(Canvas canvas,RectF rectF){
         mPaint.setColor(Color.GRAY);
         Log.d(TAG, "drawMask: curPoint:"+curPoint);
-        canvas.drawArc(rectF,curPoint,450-curPoint,false,mPaint);
+        canvas.drawArc(rectF,curPoint,endPoint-curPoint,false,mPaint);
     }
     private void drawInitMask(Canvas canvas,RectF rectF){
         mPaint.setColor(Color.GRAY);
         Log.d(TAG, "drawMask: curPoint:"+curPoint);
-        canvas.drawArc(rectF,90,450,false,mPaint);
+        canvas.drawArc(rectF,startPoint,endPoint,false,mPaint);
     }
 
-    public void init(){
+    public void init(@Nullable TypedArray array){
+        if(array!=null){
+            int cycleWidth = array.getInt(R.styleable.MainCycleView_cycleWidth,10);
+            float startPoint = array.getFloat(R.styleable.MainCycleView_startPoint,90);
+            float endPoint = array.getFloat(R.styleable.MainCycleView_endPoint,450);
+            int animationLength = array.getInt(R.styleable.MainCycleView_animationLength,1000);
+
+            this.cycleWidth = cycleWidth;
+            this.startPoint = startPoint;
+            this.endPoint = endPoint;
+            this.animationLength = animationLength;
+        }
         mPaint = new Paint();
         mPaint.setStrokeWidth(cycleWidth);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setAntiAlias(true);
-        //setAnimation(90,450,animationLength);
     }
 
-    public void setCycleWidth(int cycleWidth) {
-        this.cycleWidth = cycleWidth;
-    }
-
-    public void setTotalFee(float fee){
-        this.totalFee = fee;
-    }
 
 
     private void setAnimation(float start, float end, int length){
@@ -158,17 +169,15 @@ public class MainCycleView extends View {
         valueAnimator.start();
     }
 
-    public void setAnimationLength(int animationLength) {
-        this.animationLength = animationLength;
-    }
 
-    public void setData(List<Order> orders){
-        mOrders = new ArrayList<>(orders);
-        Collections.sort(mOrders, new Comparator<Order>() {
+
+    public void setData(List<CycleItem> items){
+        mItems = new ArrayList<>(items);
+        Collections.sort(mItems, new Comparator<CycleItem>() {
             @Override
-            public int compare(Order order, Order t1) {
-                float i = order.getMoney();
-                float j = t1.getMoney();
+            public int compare(CycleItem order, CycleItem t1) {
+                float i = order.getNum();
+                float j = t1.getNum();
                 if(i>j)
                     return -1;
                 if(i<j)
@@ -180,8 +189,8 @@ public class MainCycleView extends View {
     }
     private void setTotalFee(){
         float fee = 0f;
-        for(Order o:mOrders){
-            fee +=o.getMoney();
+        for(CycleItem i:mItems){
+            fee +=i.getNum();
         }
         this.totalFee = fee;
     }
