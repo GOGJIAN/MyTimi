@@ -119,7 +119,7 @@ public class MainCycleView extends View {
 
 
     public void updateUI(){
-        curPoint = 90;
+        curPoint = startPoint;
         setAnimation(startPoint,endPoint,animationLength);
     }
 

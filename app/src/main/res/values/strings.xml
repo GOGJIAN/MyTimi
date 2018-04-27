@@ -5,6 +5,8 @@
     <string name="number100">100.00</string>
     <string name="income">收入</string>
     <string name="pay">支出</string>
-    <string name="moneyString">￥3.00</string>
+    <string name="moneyString">3.00</string>
+    <string name="moneyFlag">￥</string>
+    <string name="cakeString">点心</string>
 
 </resources>

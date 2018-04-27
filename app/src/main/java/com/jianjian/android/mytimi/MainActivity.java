@@ -20,6 +20,7 @@ import com.jianjian.android.mytimi.View.MainCycleView;
 import com.jianjian.android.mytimi.model.CycleItem;
 import com.jianjian.android.mytimi.model.Order;
 import com.jianjian.android.mytimi.model.OrderLab;
+import com.jianjian.android.mytimi.tools.Content;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,16 +30,23 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static com.jianjian.android.mytimi.tools.Content.INCOME_TYPE;
+
 public class MainActivity extends AppCompatActivity {
 
-    private static final int INCOME_TYPE = 0;
+
     @BindView(R.id.order_recycler_view)
     RecyclerView mOrderRecView;
     @BindView(R.id.add_order_image_button)
     MainCycleView mMainCycleView;
+    @BindView(R.id.income_text)
+    TextView incomeText;
+    @BindView(R.id.pay_text)
+    TextView payText;
 
     private OrderAdapter mAdapter;
     private OrderLab mOrderLab;
+
 
 
     private Integer lastIndexItem;
@@ -79,6 +87,21 @@ public class MainActivity extends AppCompatActivity {
                         }).show();
             }
         });
+    }
+
+    private void getPayAndIncome(){
+        List<Order> mOrders = mOrderLab.getOrders();
+        float income = 0;
+        float pay = 0;
+        for(Order o:mOrders){
+            if(o.getType()== INCOME_TYPE)
+                income+=o.getMoney();
+            else
+                pay += o.getMoney();
+        }
+        payText.setText(String.valueOf(pay));
+        incomeText.setText(String.valueOf(income));
+
     }
 
     public void addOrder(int type){
@@ -147,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
             mAdapter.setOrders(Orders);
             mAdapter.notifyDataSetChanged();
         }
+        getPayAndIncome();
         mMainCycleView.setData(getItems(Orders));
         mMainCycleView.updateUI();
     }
@@ -231,8 +255,8 @@ public class MainActivity extends AppCompatActivity {
             animator.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animator) {
-                    mEditImg.setEnabled(false);
-                    mDeleteImg.setEnabled(false);
+                    mEditImg.setClickable(false);
+                    mDeleteImg.setClickable(false);
                 }
 
                 @Override
@@ -274,8 +298,8 @@ public class MainActivity extends AppCompatActivity {
 
                 @Override
                 public void onAnimationEnd(Animator animator) {
-                    mEditImg.setEnabled(true);
-                    mDeleteImg.setEnabled(true);
+                    mEditImg.setClickable(true);
+                    mDeleteImg.setClickable(true);
                     isFront = false;
                 }
 
