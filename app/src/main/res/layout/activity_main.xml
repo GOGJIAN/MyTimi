@@ -38,12 +38,12 @@
         android:id="@+id/income_text"/>
     <com.jianjian.android.mytimi.View.MainCycleView
         android:id="@+id/add_order_image_button"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        app:startPoint="0"
+        android:layout_width="95dp"
+        android:layout_height="95dp"
+        app:startPoint="90"
         app:cycleWidth="10"
-        app:animationLength="2000"
-        app:endPoint="360"
+        app:animationLength="1000"
+        app:endPoint="450"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@id/imageView"

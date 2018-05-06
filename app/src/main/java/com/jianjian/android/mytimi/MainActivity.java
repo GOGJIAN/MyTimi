@@ -4,6 +4,8 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -17,15 +19,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.jianjian.android.mytimi.View.MainCycleView;
+import com.jianjian.android.mytimi.activity.AddOrderActivity;
 import com.jianjian.android.mytimi.model.CycleItem;
 import com.jianjian.android.mytimi.model.Order;
 import com.jianjian.android.mytimi.model.OrderLab;
-import com.jianjian.android.mytimi.tools.Content;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -70,21 +71,7 @@ public class MainActivity extends AppCompatActivity {
         mMainCycleView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new AlertDialog.Builder(MainActivity.this)
-                        .setItems(getResources().getStringArray(R.array.order_type), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                //支出1，收入0
-                                switch (i){
-                                    case 0:
-                                        addOrder(0);
-                                        break;
-                                    case 1:
-                                        addOrder(1);
-                                        break;
-                                }
-                            }
-                        }).show();
+                addOrder();
             }
         });
     }
@@ -104,32 +91,34 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void addOrder(int type){
-        Random random = new Random();
-        float ff = random.nextFloat()*800;
-        int icon[] = {R.drawable.ic_cake,
-                        R.drawable.ic_card,
-                        R.drawable.ic_drink,
-                        R.drawable.ic_food,
-                        R.drawable.ic_movie,
-                        R.drawable.ic_study};
-        int color[] = {R.color.cakeColor,
-                        R.color.cardColor,
-                        R.color.drinkColor,
-                        R.color.foodColor,
-                        R.color.movieColor,
-                        R.color.studyColor};
-
-        Order order = new Order();
-        order.setType(type);
-        order.setContent("哈哈哈哈");
-        order.setTag("哈哈哈哈");
-        order.setMoney(ff);
-        int i = random.nextInt(6);
-        order.setColor(color[i]);
-        order.setIcon(icon[i]);
-        mOrderLab.addOrder(order);
-        updateUI();
+    public void addOrder(){
+//        Random random = new Random();
+//        float ff = random.nextFloat()*800;
+//        int icon[] = {R.drawable.ic_cake,
+//                        R.drawable.ic_card,
+//                        R.drawable.ic_drink,
+//                        R.drawable.ic_food,
+//                        R.drawable.ic_movie,
+//                        R.drawable.ic_study};
+//        int color[] = {R.color.cakeColor,
+//                        R.color.cardColor,
+//                        R.color.drinkColor,
+//                        R.color.foodColor,
+//                        R.color.movieColor,
+//                        R.color.studyColor};
+//
+//        Order order = new Order();
+//        order.setType(type);
+//        order.setContent("哈哈哈哈");
+//        order.setTag("哈哈哈哈");
+//        order.setMoney(ff);
+//        int i = random.nextInt(6);
+//        order.setColor(color[i]);
+//        order.setIcon(String.valueOf(icon[i]));
+//        mOrderLab.addOrder(order);
+//        updateUI();
+        Intent intent = new Intent(this,AddOrderActivity.class);
+        startActivity(intent);
     }
 
 
@@ -183,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
         TextView mMoneyText;
         TextView mContentText;
         View mBottomLine;
-        ImageView mImageView,mEditImg,mDeleteImg;
+        ImageView mImageView,mEditImg,mDeleteImg,mContentImg;
         FrameLayout mFrameLayout;
         float originalX;
         boolean isFront = true;
@@ -200,11 +189,13 @@ public class MainActivity extends AppCompatActivity {
             mFrameLayout = itemView.findViewById(R.id.text_frame);
             mEditImg = itemView.findViewById(R.id.edit_img);
             mDeleteImg = itemView.findViewById(R.id.delete_img);
+            mContentImg = itemView.findViewById(R.id.content_img);
         }
 
         //初始化组件状态，避免出现RecyclerView复用问题
         public void initViewStatus(){
             mFrameLayout.setVisibility(View.VISIBLE);
+            mContentImg.setVisibility(View.VISIBLE);
             mEditImg.setVisibility(View.INVISIBLE);
             mDeleteImg.setVisibility(View.INVISIBLE);
             mEditImg.setEnabled(false);
@@ -217,7 +208,8 @@ public class MainActivity extends AppCompatActivity {
             mMoneyText.setText(String.valueOf(order.getMoney()));
             mTagText.setText(order.getTag());
             mContentText.setText(order.getContent());
-            mImageView.setImageResource(order.getIcon());
+            mImageView.setImageResource(Integer.parseInt(order.getIcon()));
+            mContentImg.setImageBitmap(BitmapFactory.decodeFile(order.getImage()));
             mBottomLine.setVisibility(isLast?View.INVISIBLE:View.VISIBLE);
             mDeleteImg.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -255,6 +247,8 @@ public class MainActivity extends AppCompatActivity {
             animator.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animator) {
+                    mEditImg.setEnabled(false);
+                    mDeleteImg.setEnabled(false);
                     mEditImg.setClickable(false);
                     mDeleteImg.setClickable(false);
                 }
@@ -262,6 +256,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onAnimationEnd(Animator animator) {
                     mFrameLayout.setVisibility(View.VISIBLE);
+                    mContentImg.setVisibility(View.VISIBLE);
                     mEditImg.setVisibility(View.INVISIBLE);
                     mDeleteImg.setVisibility(View.INVISIBLE);
                     isFront = true;
@@ -270,6 +265,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onAnimationCancel(Animator animator) {
                     mFrameLayout.setVisibility(View.VISIBLE);
+                    mContentImg.setVisibility(View.VISIBLE);
                     mEditImg.setVisibility(View.INVISIBLE);
                     mDeleteImg.setVisibility(View.INVISIBLE);
                     isFront = true;
@@ -283,9 +279,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void setAnimation(){
-            mFrameLayout.setVisibility(View.INVISIBLE);
-            mEditImg.setVisibility(View.VISIBLE);
-            mDeleteImg.setVisibility(View.VISIBLE);
 
             ObjectAnimator animator = ObjectAnimator.ofFloat(mEditImg,"X",originalX,originalX+distance).setDuration(animationLength);
             animator.start();
@@ -293,11 +286,16 @@ public class MainActivity extends AppCompatActivity {
             animator.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animator) {
-
+                    mFrameLayout.setVisibility(View.INVISIBLE);
+                    mContentImg.setVisibility(View.INVISIBLE);
+                    mEditImg.setVisibility(View.VISIBLE);
+                    mDeleteImg.setVisibility(View.VISIBLE);
                 }
 
                 @Override
                 public void onAnimationEnd(Animator animator) {
+                    mEditImg.setEnabled(true);
+                    mDeleteImg.setEnabled(true);
                     mEditImg.setClickable(true);
                     mDeleteImg.setClickable(true);
                     isFront = false;

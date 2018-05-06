@@ -1,5 +1,7 @@
 package com.jianjian.android.mytimi.model;
 
+import android.graphics.drawable.Icon;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -19,24 +21,34 @@ public class Order {
     private String tag;
     private float money;
     private String content;
+    private String image;
     private int color;
-    private int icon;
+    private String icon;
 
-    @Generated(hash = 1903197225)
+    @Generated(hash = 52393389)
     public Order(Long id, int type, Date date, String tag, float money,
-            String content, int color, int icon) {
+            String content, String image, int color, String icon) {
         this.id = id;
         this.type = type;
         this.date = date;
         this.tag = tag;
         this.money = money;
         this.content = content;
+        this.image = image;
         this.color = color;
         this.icon = icon;
     }
 
     @Generated(hash = 1105174599)
     public Order() {
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Long getId() {
@@ -95,11 +107,11 @@ public class Order {
         this.color = color;
     }
 
-    public int getIcon() {
+    public String getIcon() {
         return icon;
     }
 
-    public void setIcon(int icon) {
+    public void setIcon(String icon) {
         this.icon = icon;
     }
 }

@@ -8,5 +8,11 @@
     <string name="moneyString">3.00</string>
     <string name="moneyFlag">￥</string>
     <string name="cakeString">点心</string>
+    <string name="confirm">确定</string>
 
+    <string name="date">2018年12月13日</string>
+    <string name="remark">备注</string>
+
+    <string name="author">com.jianjian.android.mytimi.provider</string>
+    <string name="common">一般</string>
 </resources>

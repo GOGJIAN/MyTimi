@@ -4,4 +4,14 @@
         <item>收入</item>
         <item>支出</item>
     </array>
+    <array name="edit_add">
+        <item>内容</item>
+        <item>日期</item>
+        <item>图片</item>
+        <item>手绘</item>
+    </array>
+    <array name="photo">
+        <item>拍照</item>
+        <item>相册</item>
+    </array>
 </resources>

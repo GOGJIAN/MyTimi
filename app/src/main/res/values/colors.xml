@@ -5,6 +5,10 @@
     <color name="colorAccent">#FF4081</color>
     <color name="gray">#CCCCCC</color>
 
+    <color name="commonColor">#FFCC66</color>
+    <color name="communicationColor">#00FFFF</color>
+    <color name="liveColor">#00FF55</color>
+    <color name="trafficColor">#33aaFF</color>
     <color name="foodColor">#FF6600</color>
     <color name="cardColor">#77B3D4</color>
     <color name="cakeColor">#f5d306</color>

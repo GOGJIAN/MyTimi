@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.graphics.drawable.BitmapDrawable;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
@@ -49,15 +50,19 @@ public class MainCycleView extends View {
 
     private int cycleWidth = 10;
 
+    private Context mContext;
+
     List<CycleItem> mItems = new ArrayList<>();
 
     public MainCycleView(Context context) {
         super(context);
         init(null);
+        mContext = context;
     }
 
     public MainCycleView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         TypedArray array = context.obtainStyledAttributes(attrs,R.styleable.MainCycleView);
         init(array);
         array.recycle();
@@ -65,6 +70,7 @@ public class MainCycleView extends View {
 
     public MainCycleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        mContext = context;
         TypedArray array = context.obtainStyledAttributes(attrs,R.styleable.MainCycleView);
         init(array);
         array.recycle();
@@ -72,6 +78,7 @@ public class MainCycleView extends View {
 
     public MainCycleView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
+        mContext = context;
         TypedArray array = context.obtainStyledAttributes(attrs,R.styleable.MainCycleView);
         init(array);
         array.recycle();
@@ -80,7 +87,7 @@ public class MainCycleView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         @SuppressLint("DrawAllocation")
-        RectF rectF = new RectF(cycleWidth+5,cycleWidth+5,getWidth()-cycleWidth-5,getHeight()-cycleWidth-5);
+        RectF rectF = new RectF(cycleWidth+2,cycleWidth+2,getWidth()-cycleWidth-2,getHeight()-cycleWidth-2);
         drawCenterCircle(canvas);
         drawInitMask(canvas,rectF);
         drawItem(canvas,rectF);
@@ -101,7 +108,7 @@ public class MainCycleView extends View {
         mPaint.setColor(Color.BLUE);
         float centerX = getWidth()/2;
         RectF rectF = new RectF(centerX-40,centerX-40,centerX+40,centerX+40);
-        Bitmap bitmap = ((BitmapDrawable)getResources().getDrawable(R.drawable.ic_add)).getBitmap();
+        Bitmap bitmap = ((BitmapDrawable)ContextCompat.getDrawable(mContext,R.drawable.ic_add)).getBitmap();
         canvas.drawBitmap(bitmap,null,rectF,null);
     }
 
@@ -109,7 +116,7 @@ public class MainCycleView extends View {
         float curStartPoint = startPoint;
         float curSweepLength ;
         for(CycleItem item:mItems){
-            mPaint.setColor(getResources().getColor(item.getColor()));
+            mPaint.setColor(ContextCompat.getColor(mContext,item.getColor()));
             curSweepLength = item.getNum()/totalFee*360;
             canvas.drawArc(rectF,curStartPoint,curSweepLength,false,mPaint);
             curStartPoint+=curSweepLength;
