@@ -7,7 +7,7 @@ android {
     buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "com.jianjian.android.mytimi"
-        minSdkVersion 23
+        minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
         versionName "1.0"

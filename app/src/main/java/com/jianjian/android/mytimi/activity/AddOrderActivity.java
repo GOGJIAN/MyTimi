@@ -176,13 +176,13 @@ public class AddOrderActivity extends AppCompatActivity {
             mView = itemView;
         }
         public void bindView(final SelectTagItem selectItem){
-            final Icon icon = Icon.createWithResource(AddOrderActivity.this,Integer.parseInt(selectItem.getIcon()));
-            mImageView.setImageIcon(icon);
+
+            mImageView.setImageResource(Integer.parseInt(selectItem.getIcon()));
             mTextView.setText(selectItem.getTag());
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    selectedIcon.setImageIcon(icon);
+                    selectedIcon.setImageResource(Integer.parseInt(selectItem.getIcon()));
                     selectedTag.setText(selectItem.getTag());
                     mOrder.setIcon(selectItem.getIcon());
                     mOrder.setTag(selectItem.getTag());

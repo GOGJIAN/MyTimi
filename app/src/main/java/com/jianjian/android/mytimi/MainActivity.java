@@ -3,11 +3,12 @@ package com.jianjian.android.mytimi;
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
+import android.preference.Preference;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,13 +24,19 @@ import com.jianjian.android.mytimi.activity.AddOrderActivity;
 import com.jianjian.android.mytimi.model.CycleItem;
 import com.jianjian.android.mytimi.model.Order;
 import com.jianjian.android.mytimi.model.OrderLab;
+import com.jianjian.android.mytimi.tools.Content;
+import com.jianjian.android.mytimi.tools.MyPreferences;
+import com.jianjian.android.mytimi.tools.photoUtil;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 
 import static com.jianjian.android.mytimi.tools.Content.INCOME_TYPE;
 
@@ -44,13 +51,20 @@ public class MainActivity extends AppCompatActivity {
     TextView incomeText;
     @BindView(R.id.pay_text)
     TextView payText;
+    @BindView(R.id.imageView)
+    ImageView backgroundImg;
 
     private OrderAdapter mAdapter;
     private OrderLab mOrderLab;
 
-
+    private String photoPath;
 
     private Integer lastIndexItem;
+
+
+    File mCurrentFile;
+
+    photoUtil mPhotoUtil = new photoUtil();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,6 +88,93 @@ public class MainActivity extends AppCompatActivity {
                 addOrder();
             }
         });
+        String backPath = MyPreferences.getBackgroundPath(this);
+        if(backPath!=null){
+
+            backgroundImg.setImageBitmap(BitmapFactory.decodeFile(backPath));
+        }
+        backgroundImg.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+//                AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this)
+//                        .setItems(getResources().getStringArray(R.array.photo), new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialogInterface, int i) {
+//                                File dir = new File(Environment.getExternalStorageDirectory()+"/MyTimi/");
+//                                if(!dir.exists())
+//                                    dir.mkdir();
+//                                if (i == 0) {
+//                                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                                    mCurrentFile = new File(path, System.currentTimeMillis() + ".jpg");
+//                                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
+//                                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                                        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//                                    }
+//                                    intent.putExtra(MediaStore.EXTRA_OUTPUT, getUriForFile(MainActivity.this,mCurrentFile));
+//                                    startActivityForResult(intent, REQUEST_CAPTURE);
+//                                } else {
+//                                    Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+//                                    intent.setType("image/*");
+//                                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.N){
+//                                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+//                                        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+//                                    }
+//                                    startActivityForResult(intent, REQUEST_SCAN_N);
+//                                }
+//                            }
+//
+//                        }).create();
+//                if (Build.VERSION.SDK_INT >= 23) {
+//                    int checkCallPhonePermission = ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+//                    if(checkCallPhonePermission != PackageManager.PERMISSION_GRANTED){
+//                        ActivityCompat.requestPermissions(MainActivity.this,new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_CODE_ASK_STORAGE);
+//                    }else{
+//                        alertDialog.show();
+//                    }
+//                }else {
+//                    alertDialog.show();
+//                }
+                mPhotoUtil.showDialog(MainActivity.this);
+                return true;
+            }
+        });
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+//        switch (requestCode){
+//            case REQUEST_CAPTURE:
+//                mCurrentFile = crop(getUriForFile(this,mCurrentFile),this,path);
+//                break;
+//            case REQUEST_SCAN_N:
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+//                    File imgUri = new File(GetImagePath.getPath(this, data.getData()));
+//                    Uri dataUri = FileProvider.getUriForFile
+//                            (this, author, imgUri);
+//                    // Uri dataUri = getImageContentUri(data.getData());
+//                    mCurrentFile = crop(dataUri,this,path);
+//                } else {
+//                    mCurrentFile = crop(data.getData(),this,path);
+//                }
+//
+//                break;
+//            case REQUEST_CROP:
+//                Uri cropUri = FileProvider.getUriForFile(this,author,mCurrentFile);
+//                photoPath = Uri.fromFile(mCurrentFile).toString().substring(7);
+//                Bitmap bitmap = null;
+//                try {
+//                    bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(cropUri));
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//                backgroundImg.setImageBitmap(bitmap);
+//                break;
+//        }
+        if(resultCode!=RESULT_CANCELED)
+            photoPath = mPhotoUtil.dealResult(requestCode, Content.path,data,backgroundImg,21,8,40);
+            MyPreferences.setBackgroundPath(this,photoPath);
     }
 
     private void getPayAndIncome(){
