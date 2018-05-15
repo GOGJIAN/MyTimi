@@ -6,9 +6,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Build;
+import android.net.Uri;
 import android.os.Bundle;
-import android.preference.Preference;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +24,11 @@ import com.jianjian.android.mytimi.activity.AddOrderActivity;
 import com.jianjian.android.mytimi.model.CycleItem;
 import com.jianjian.android.mytimi.model.Order;
 import com.jianjian.android.mytimi.model.OrderLab;
+import com.jianjian.android.mytimi.service.PollService;
 import com.jianjian.android.mytimi.tools.Content;
+import com.jianjian.android.mytimi.tools.DoubleCache;
+import com.jianjian.android.mytimi.tools.FileUploader;
+import com.jianjian.android.mytimi.tools.ImgDownloader;
 import com.jianjian.android.mytimi.tools.MyPreferences;
 import com.jianjian.android.mytimi.tools.photoUtil;
 
@@ -39,6 +43,7 @@ import butterknife.ButterKnife;
 
 
 import static com.jianjian.android.mytimi.tools.Content.INCOME_TYPE;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,26 +62,42 @@ public class MainActivity extends AppCompatActivity {
     private OrderAdapter mAdapter;
     private OrderLab mOrderLab;
 
-    private String photoPath;
+    private String photoName;
 
     private Integer lastIndexItem;
 
-
-    File mCurrentFile;
+    DoubleCache mDoubleCache;
 
     photoUtil mPhotoUtil = new photoUtil();
+
+
+    private ImgDownloader<ImageView> mImgDownloader;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mDoubleCache = new DoubleCache();
         ButterKnife.bind(MainActivity.this);
         mOrderLab = OrderLab.get(this);
-        mOrderRecView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-        initView();
+
+        PollService.setServiceAlarm(this);
+
         updateUI();
+        mImgDownloader = new ImgDownloader<>(new Handler());
+        mImgDownloader.setImgDownloadListener(new ImgDownloader.ImgDownloadListener<ImageView>() {
+            @Override
+            public void onImgDownLoaded(ImageView target, Bitmap img) {
+                mDoubleCache.put(photoName,img);
+                target.setImageBitmap(img);
+            }
+        });
+        mImgDownloader.start();
+        mImgDownloader.getLooper();
+        initView();
     }
 
     private void initView(){
+        mOrderRecView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         mMainCycleView.setData(getItems(mOrderLab.getOrders()));
 //        mMainCycleView.setCycleWidth(5);
 //        mMainCycleView.setAnimationLength(3000);
@@ -89,9 +110,20 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         String backPath = MyPreferences.getBackgroundPath(this);
-        if(backPath!=null){
 
-            backgroundImg.setImageBitmap(BitmapFactory.decodeFile(backPath));
+        if(backPath!=null){
+            photoName = backPath.substring(backPath.lastIndexOf("/")==-1?0:backPath.lastIndexOf("/")+1);
+            Bitmap bitmap = mDoubleCache.get(photoName);
+            if(bitmap!=null)
+                backgroundImg.setImageBitmap(bitmap);
+            else {
+//                backgroundImg.setImageBitmap(BitmapFactory.decodeFile(backPath));
+                Uri uri = Uri.parse(Content.url+"test")
+                        .buildUpon()
+                        .appendQueryParameter("filename", photoName)
+                        .build();
+                mImgDownloader.queueUrl(backgroundImg, uri.toString());
+            }
         }
         backgroundImg.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -138,7 +170,13 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mImgDownloader.quit();
+        mImgDownloader.clearQueue();
     }
 
     @Override
@@ -162,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 //                break;
 //            case REQUEST_CROP:
 //                Uri cropUri = FileProvider.getUriForFile(this,author,mCurrentFile);
-//                photoPath = Uri.fromFile(mCurrentFile).toString().substring(7);
+//                photoName = Uri.fromFile(mCurrentFile).toString().substring(7);
 //                Bitmap bitmap = null;
 //                try {
 //                    bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(cropUri));
@@ -172,10 +210,24 @@ public class MainActivity extends AppCompatActivity {
 //                backgroundImg.setImageBitmap(bitmap);
 //                break;
 //        }
-        if(resultCode!=RESULT_CANCELED)
-            photoPath = mPhotoUtil.dealResult(requestCode, Content.path,data,backgroundImg,21,8,40);
-            MyPreferences.setBackgroundPath(this,photoPath);
+        if(resultCode!=RESULT_CANCELED) {
+            photoName = mPhotoUtil.dealResult(requestCode, Content.path, data, backgroundImg, 21, 8, 40);
+            Bitmap bitmap = BitmapFactory.decodeFile(Content.path+ photoName);
+            mDoubleCache.put(photoName,bitmap);
+            if(photoName !=null) {
+                new Thread(new Runnable(){
+                    @Override
+                    public void run() {
+                        File file = new File(photoName);
+                        new FileUploader().uploadFile(file);
+                    }
+                }).start();
+
+            }
+            MyPreferences.setBackgroundPath(this, photoName);
+        }
     }
+
 
     private void getPayAndIncome(){
         List<Order> mOrders = mOrderLab.getOrders();
@@ -310,6 +362,8 @@ public class MainActivity extends AppCompatActivity {
             mTagText.setText(order.getTag());
             mContentText.setText(order.getContent());
             mImageView.setImageResource(Integer.parseInt(order.getIcon()));
+            //图片下载器
+//            mImgDownloader.queueUrl(mContentImg,order.getImage());
             mContentImg.setImageBitmap(BitmapFactory.decodeFile(order.getImage()));
             mBottomLine.setVisibility(isLast?View.INVISIBLE:View.VISIBLE);
             mDeleteImg.setOnClickListener(new View.OnClickListener() {

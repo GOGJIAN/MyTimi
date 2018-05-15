@@ -16,4 +16,7 @@ public class Content {
     public static final int REQUEST_CODE_ASK_STORAGE = 6;
 
     public static final String path = Environment.getExternalStorageDirectory()+"/myTimi/";
+
+    public static final String url = "http://192.168.43.59:8080/timi/";
+//public static final String url = "http://www.baidu.com";
 }

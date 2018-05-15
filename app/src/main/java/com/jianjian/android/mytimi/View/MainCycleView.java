@@ -135,12 +135,12 @@ public class MainCycleView extends View {
 
     private void drawMask(Canvas canvas,RectF rectF){
         mPaint.setColor(Color.GRAY);
-        Log.d(TAG, "drawMask: curPoint:"+curPoint);
+//        Log.d(TAG, "drawMask: curPoint:"+curPoint);
         canvas.drawArc(rectF,curPoint,endPoint-curPoint,false,mPaint);
     }
     private void drawInitMask(Canvas canvas,RectF rectF){
         mPaint.setColor(Color.GRAY);
-        Log.d(TAG, "drawMask: curPoint:"+curPoint);
+//        Log.d(TAG, "drawMask: curPoint:"+curPoint);
         canvas.drawArc(rectF,startPoint,endPoint,false,mPaint);
     }
 
@@ -172,7 +172,7 @@ public class MainCycleView extends View {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
                 curPoint = (float)valueAnimator.getAnimatedValue();
-                Log.d(TAG, "onAnimationUpdate: curPoint:"+curPoint);
+//                Log.d(TAG, "onAnimationUpdate: curPoint:"+curPoint);
                 invalidate();
             }
         });
