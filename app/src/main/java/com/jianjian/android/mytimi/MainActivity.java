@@ -19,9 +19,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.jianjian.android.mytimi.View.MainCycleView;
 import com.jianjian.android.mytimi.activity.AddOrderActivity;
-import com.jianjian.android.mytimi.model.CycleItem;
 import com.jianjian.android.mytimi.model.Order;
 import com.jianjian.android.mytimi.model.OrderLab;
 import com.jianjian.android.mytimi.service.PollService;
@@ -31,6 +29,8 @@ import com.jianjian.android.mytimi.tools.FileUploader;
 import com.jianjian.android.mytimi.tools.ImgDownloader;
 import com.jianjian.android.mytimi.tools.MyPreferences;
 import com.jianjian.android.mytimi.tools.photoUtil;
+import com.jianjian.typecycleview.View.CycleItem;
+import com.jianjian.typecycleview.View.MainCycleView;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -434,17 +434,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         private void setAnimation(){
-
+            mFrameLayout.setVisibility(View.INVISIBLE);
+            mContentImg.setVisibility(View.INVISIBLE);
+            mEditImg.setVisibility(View.VISIBLE);
+            mDeleteImg.setVisibility(View.VISIBLE);
             ObjectAnimator animator = ObjectAnimator.ofFloat(mEditImg,"X",originalX,originalX+distance).setDuration(animationLength);
             animator.start();
             ObjectAnimator.ofFloat(mDeleteImg,"X",originalX,originalX-distance).setDuration(animationLength).start();
             animator.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animator) {
-                    mFrameLayout.setVisibility(View.INVISIBLE);
-                    mContentImg.setVisibility(View.INVISIBLE);
-                    mEditImg.setVisibility(View.VISIBLE);
-                    mDeleteImg.setVisibility(View.VISIBLE);
+
                 }
 
                 @Override

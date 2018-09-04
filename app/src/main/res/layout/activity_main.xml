@@ -37,7 +37,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/today_income"
         android:id="@+id/income_text"/>
-    <com.jianjian.android.mytimi.View.MainCycleView
+    <com.jianjian.typecycleview.View.MainCycleView
         android:id="@+id/add_order_image_button"
         android:layout_width="95dp"
         android:layout_height="95dp"

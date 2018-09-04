@@ -102,7 +102,7 @@ public class photoUtil {
                 break;
             case REQUEST_CROP:
                 Uri cropUri = FileProvider.getUriForFile(mContext,author,mCurrentFile);
-                photoPath = mCurrentFile.getName();
+                photoPath = mCurrentFile.getAbsolutePath();
                 Bitmap bitmap = null;
                 try {
                     bitmap = BitmapFactory.decodeStream(mContext.getContentResolver().openInputStream(cropUri));

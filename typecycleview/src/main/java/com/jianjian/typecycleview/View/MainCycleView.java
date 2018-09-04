@@ -1,4 +1,4 @@
-package com.jianjian.android.mytimi.View;
+package com.jianjian.typecycleview.View;
 
 
 import android.animation.ValueAnimator;
@@ -16,12 +16,10 @@ import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 
-import com.jianjian.android.mytimi.R;
-import com.jianjian.android.mytimi.model.CycleItem;
-import com.jianjian.android.mytimi.model.Order;
+
+import com.jianjian.typecycleview.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +63,7 @@ public class MainCycleView extends View {
     public MainCycleView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
-        TypedArray array = context.obtainStyledAttributes(attrs,R.styleable.MainCycleView);
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.MainCycleView);
         init(array);
         array.recycle();
     }
@@ -204,8 +202,4 @@ public class MainCycleView extends View {
         }
         this.totalFee = fee;
     }
-
-
-
-
 }

@@ -19,7 +19,7 @@ allprojects {
   
 使用：
 ```
-<com.jianjian.android.mytimi.View.MainCycleView
+<com.jianjian.typecycleview.View.MainCycleView
         android:id="@+id/add_order_image_button"
         android:layout_width="90dp"
         android:layout_height="90dp"
@@ -34,7 +34,7 @@ allprojects {
 
 内容使用该类型的ArrayList，在这个类型中有颜色和大小两个属性
 ```
-import com.jianjian.android.mytimi.model.CycleItem;
+import com.jianjian.typecycleview.View.CycleItem;
 ```
 使用这个方法添加元素
 ```

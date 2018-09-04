@@ -56,7 +56,7 @@ public class PollService extends IntentService {
                     .build();
 
         }else{
-            notification = new NotificationCompat.Builder(this)
+            notification = new NotificationCompat.Builder(this,str)
                     .setTicker("hello")
                     .setSmallIcon(R.drawable.ic_common)
                     .setContentTitle("hello1")

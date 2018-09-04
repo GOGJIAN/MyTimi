@@ -1,4 +1,4 @@
-package com.jianjian.android.mytimi.model;
+package com.jianjian.typecycleview.View;
 
 public class CycleItem {
     private int color;
