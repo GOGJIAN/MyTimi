@@ -1,6 +1,8 @@
 # MyTimi
-记账demo
-![示意图](https://github.com/GOGJIAN/MyTimi/blob/master/untitled.gif)
+记账demo  
+
+<img src="https://github.com/GOGJIAN/MyTimi/blob/master/untitled.gif" width="200"/> 
+
 添加依赖：
 ```
 allprojects {
